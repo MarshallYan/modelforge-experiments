@@ -2,11 +2,11 @@
 #SBATCH --job-name={{ job_name }}
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem-per-cpu=16G
+#SBATCH --mem-per-cpu=64G
 #SBATCH --gres=gpu:a100:1
-#SBATCH --time=01:00:00
+#SBATCH --time=10:00:00
 #SBATCH --output=slurm_out/%j_%x_%N.out
 #SBATCH --error=slurm_err/%j_%x_%N.err
 
@@ -31,3 +31,4 @@ mamba activate modelforge
 cd {{ run_index }} || exit
 pwd
 echo {{ python_cmd }}
+srun {{ python_cmd }}

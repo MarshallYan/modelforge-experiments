@@ -131,8 +131,8 @@ if __name__ == "__main__":
                     )
 
                     python_cmd = (
-                        f"python perform_training.py "
-                        f"--condensed_config_path run{count:03d}/config.toml "
+                        f"python ../../../scripts/perform_training.py "
+                        f"--condensed_config_path config.toml "
                         f"--accelerator 'gpu' --device [0]"
                     )
 
