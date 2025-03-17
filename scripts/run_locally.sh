@@ -1,0 +1,1 @@
+python perform_training.py --condensed_config_path config.toml --accelerator 'gpu' --device [0]
