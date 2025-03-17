@@ -16,8 +16,8 @@ project = "{{ project }}"
 group = "{{ group }}"
 log_model = true
 job_type = "benchmarking"
-tags = ["v_0.1.0"]
-notes = "tunning hyperparameters"
+tags = {{ tags }}
+notes = "tunning hyperparameters with given ranges"
 # ------------------------------------------------------------ #
 [training.lr_scheduler]
 scheduler_name = "ReduceLROnPlateau"

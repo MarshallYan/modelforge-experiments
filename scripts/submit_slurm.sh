@@ -1,14 +1,14 @@
 #!/bin/bash
-#SBATCH --job-name={{ job_name }}
+#SBATCH --job-name=test
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=1
 #SBATCH --mem-per-cpu=16G
-#SBATCH --gres=gpu:a100:1
-#SBATCH --time=01:00:00
-#SBATCH --output=slurm_out/%j_%x_%N.out
-#SBATCH --error=slurm_err/%j_%x_%N.err
+#SBATCH --gres=gpu:a100:4
+#SBATCH --time=10:00:00
+#SBATCH --output=%j_%x_%N.out
+#SBATCH --error=%j_%x_%N.err
 
 source ${HOME}/.bashrc
 
@@ -25,9 +25,8 @@ env | sort | grep 'CUDA'
 nvidia-smi
 
 # Activate environment
-mamba activate modelforge
+mamba activate mf-train
 
 # Execute the python command
-cd {{ run_index }} || exit
 pwd
-echo {{ python_cmd }}
+srun python perform_training.py --condensed_config_path config.toml --accelerator 'gpu' --device [0]
