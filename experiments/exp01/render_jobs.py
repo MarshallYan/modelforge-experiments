@@ -48,9 +48,14 @@ def render_slurm_job(
         template_path: str,
         job_name: str,
         python_cmd: str,
+        run_index: str,
 ):
     template = environment.get_template(template_path)
-    slurm_script = template.render(job_name=job_name, python_cmd=python_cmd)
+    slurm_script = template.render(
+        job_name=job_name,
+        python_cmd=python_cmd,
+        run_index=run_index,
+    )
     return slurm_script
 
 
@@ -79,42 +84,49 @@ if __name__ == "__main__":
                                        +f"_{number_of_per_atom_features}")
 
                     assembled_config = (
-                          "# ============================================================ #\n\n"
-                        + render_dataset(env, dataset_template)
-                        + "\n\n# ============================================================ #\n\n"
-                        + render_potential(
+                        f"# ============================================================ #\n\n"
+                        f"{render_dataset(env, dataset_template)}"
+                        f"\n\n# ============================================================ #\n\n"
+                        f"""{render_potential(
                             env,
                             potential_template,
                             number_of_interaction_modules,
                             number_of_filters,
                             number_of_per_atom_features
-                        )
-                        + "\n\n# ============================================================ #\n\n"
-                        + render_runtime(env, runtime_template, experiment_name)
-                        + "\n\n# ============================================================ #\n\n"
-                        + render_training(env, training_template, seed)
-                        + "\n\n# ============================================================ #\n"
+                        )}"""
+                        f"\n\n# ============================================================ #\n\n"
+                        f"{render_runtime(env, runtime_template, experiment_name)}"
+                        f"\n\n# ============================================================ #\n\n"
+                        f"{render_training(env, training_template, seed)}"
+                        f"\n\n# ============================================================ #\n"
                     )
 
                     python_cmd = (
                         f"python perform_training.py "
-                        f"--condensed_config_path config.toml --accelerator 'gpu' --device [0]"
+                        f"--condensed_config_path run{count:03d}/config.toml "
+                        f"--accelerator 'gpu' --device [0]"
                     )
 
-                    slurm_script = render_slurm_job(env, slurm_template, job_name="test", python_cmd=python_cmd)
+                    slurm_script = render_slurm_job(
+                        env,
+                        slurm_template,
+                        job_name="test",
+                        python_cmd=python_cmd,
+                        run_index=f"run{count:03d}",
+                    )
 
                     # output
-                    config_path = f"run{count:02d}/config.toml"
+                    config_path = f"run{count:03d}/config.toml"
                     os.makedirs(os.path.dirname(config_path), exist_ok=True)
 
                     with open(config_path, "w+") as f:
                         f.write(assembled_config)
 
-                    run_locally_path = f"run{count:02d}/run_locally.sh"
+                    run_locally_path = f"run{count:03d}/run_locally.sh"
                     with open(run_locally_path, "w+") as f:
                         f.write(python_cmd)
 
-                    submit_slurm = f"run{count:02d}/submit_slurm.sh"
+                    submit_slurm = f"run{count:03d}/submit_slurm.sh"
                     with open(submit_slurm, "w+") as f:
                         f.write(slurm_script)
 

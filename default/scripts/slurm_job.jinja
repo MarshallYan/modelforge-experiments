@@ -28,5 +28,6 @@ nvidia-smi
 mamba activate mf-train
 
 # Execute the python command
+cd {{ run_index }} || exit
 pwd
 srun {{ python_cmd }}
