@@ -8,4 +8,7 @@
 /dataSources.local.xml
 
 # Specific experiments
-../experiments/run*
+../experiments/exp*/cache
+../experiments/exp*/runs
+../experiments/exp*/slurm_out
+../experiments/exp*/slurm_err
