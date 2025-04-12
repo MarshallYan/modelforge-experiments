@@ -1,0 +1,33 @@
+[potential]
+potential_name = "SchNet"
+
+[potential.core_parameter]
+number_of_radial_basis_functions = 64
+maximum_interaction_radius = "5.0 angstrom"
+number_of_interaction_modules = 6
+number_of_filters = 128
+shared_interactions = true
+predicted_properties = {{ predicted_properties }}
+predicted_dim = {{ predicted_dim }}
+
+[potential.core_parameter.activation_function_parameter]
+activation_function_name = "ShiftedSoftplus"
+[potential.core_parameter.featurization]
+properties_to_featurize = {{ properties_to_featurize }}
+
+[potential.core_parameter.featurization.atomic_number]
+maximum_atomic_number = 101
+number_of_per_atom_features = 128
+
+[potential.postprocessing_parameter]
+properties_to_process = {{ properties_to_process }}
+
+[potential.postprocessing_parameter.per_atom_energy]
+normalize = false
+from_atom_to_system_reduction = true
+keep_per_atom_property = true
+
+{{ postprocessing }}
+
+[potential.postprocessing_parameter.general_postprocessing_operation]
+calculate_molecular_self_energy = true

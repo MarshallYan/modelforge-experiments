@@ -1,0 +1,3 @@
+experiments/exp*/cache/
+experiments/exp*/runs/
+experiments/exp*/slurm*/
