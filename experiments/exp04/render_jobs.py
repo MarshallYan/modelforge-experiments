@@ -89,9 +89,9 @@ if __name__ == "__main__":
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
     options_element_filter = [
-        [26],   # Fe
-        [29],   # Cu
-        [30],   # Zn
+        [[26]],   # Fe
+        [[29]],   # Cu
+        [[30]],   # Zn
     ]
     options_loss_components = [
         ["per_atom_energy"],
