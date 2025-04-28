@@ -5,7 +5,6 @@ from jinja2 import Environment, FileSystemLoader, Template
 def render_dataset(
         environment: Environment,
         template_path: str,
-        element_filter: list,
 ):
     template = environment.get_template(template_path)
     config = template.render()
@@ -18,7 +17,7 @@ def render_potential(
 ):
     template = environment.get_template(template_path)
     config = template.render(
-        maximum_interaction_radius=
+        maximum_interaction_radius=maximum_interaction_radius
     )
     return config
 
@@ -86,7 +85,7 @@ if __name__ == "__main__":
             experiment_name = f"maximum_interaction_radius_{maximum_interaction_radius}({seed})"
             project = "schnet_tmqm_xtb"
             group = f"maximum_interaction_radius: {maximum_interaction_radius}"
-            tags = [group, seed]
+            tags = [group]
             run_index = f"run{count:03d}"
 
             assembled_config = (
