@@ -84,8 +84,8 @@ if __name__ == "__main__":
             # config
             experiment_name = f"maximum_interaction_radius_{maximum_interaction_radius}({seed})"
             project = "schnet_tmqm_xtb"
-            group = f"maximum_interaction_radius: {maximum_interaction_radius}"
-            tags = [group]
+            group = f"PdZnFeCu_T100K_v1.1"
+            tags = [f"maximum_interaction_radius: {maximum_interaction_radius}", "E", "F", "mu"]
             run_index = f"run{count:03d}"
 
             assembled_config = (
