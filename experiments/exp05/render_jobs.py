@@ -76,7 +76,7 @@ if __name__ == "__main__":
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
 
-    range_maximum_interaction_radius = [10, 12, 14, 16, 18, 20]
+    range_maximum_interaction_radius = [6, 7, 8, 9, 10]
 
     count = 0
     for seed in range_seed:
