@@ -33,11 +33,9 @@ threshold_mode = "abs"
 interval = "epoch"
 # ------------------------------------------------------------ #
 [training.loss_parameter]
-loss_components = ['per_atom_energy', 'per_atom_force', 'per_system_dipole_moment']
+loss_components = ['per_atom_energy', 'per_system_dipole_moment']
 [training.loss_parameter.weight]
-
 per_atom_energy = 1
-per_atom_force = 0.01
 per_system_dipole_moment = 0.01
 # ------------------------------------------------------------ #
 [training.early_stopping]

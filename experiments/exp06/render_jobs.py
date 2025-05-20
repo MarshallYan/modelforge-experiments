@@ -104,8 +104,9 @@ if __name__ == "__main__":
                                 f"_{number_of_filters}"
                                 f"_{number_of_per_atom_features}"
                                 f"_{maximum_interaction_radius}"
+                                f"{seed}"
                             )
-                            project = "schnet_tmqm_sub"
+                            project = "schnet_tmqm_FevsCuZnPd"
                             group = f"seed: {seed}"
                             tags = [
                                 f"number_of_interaction_modules: {number_of_interaction_modules}",
