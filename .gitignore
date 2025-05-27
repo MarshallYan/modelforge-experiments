@@ -1,4 +1,6 @@
 .idea/
+cache/
 experiments/exp*/cache/
 experiments/exp*/runs/
+experiments/exp*/finished/
 experiments/exp*/slurm*/

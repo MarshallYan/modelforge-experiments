@@ -1,0 +1,15 @@
+[dataset]
+dataset_name = "fe_ii"
+version_select = "latest"
+num_workers = 4
+pin_memory = true
+properties_of_interest = ["atomic_numbers", "positions", "energies", "total_charge", "forces", "spin_multiplicities"]
+element_filter = []
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "energies"
+total_charge = "total_charge"
+F = "forces"
+S = "spin_multiplicities"

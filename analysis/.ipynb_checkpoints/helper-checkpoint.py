@@ -95,7 +95,7 @@ class DatasetProperties(ABC):
                 # add same length of train/validation/test tags
                 if j == 0:  # only do for the first property
                     if i == 0:
-                        properties["dataset_type"] += ["training"] * len(collection)
+                        properties["dataset_type"] += ["train"] * len(collection)
                     elif i == 1:
                         properties["dataset_type"] += ["validation"] * len(collection)
                     else:
