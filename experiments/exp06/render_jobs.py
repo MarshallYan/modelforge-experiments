@@ -81,13 +81,14 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    range_number_of_interaction_modules = [6, 9]
+    range_number_of_interaction_modules = [6]
     range_number_of_filters = [128, 256]
     range_number_of_per_atom_features = [128, 256]
-    range_maximum_interaction_radius = [5, 6]
+    range_maximum_interaction_radius = [5, 6, 7]
     options_element_filter = [
         [[26]],   # Fe
         [[29], [30], [46]],   # Cu, Zn, Pd
+        [], # all
     ]
 
     count = 0
@@ -100,7 +101,6 @@ if __name__ == "__main__":
 
                             # config names
                             experiment_name = (
-                                f"{number_of_interaction_modules}"
                                 f"_{number_of_filters}"
                                 f"_{number_of_per_atom_features}"
                                 f"_{maximum_interaction_radius}"
@@ -109,11 +109,11 @@ if __name__ == "__main__":
                             project = "schnet_tmqm_FevsCuZnPd"
                             group = f"seed: {seed}"
                             tags = [
-                                f"number_of_interaction_modules: {number_of_interaction_modules}",
                                 f"number_of_filters: {number_of_filters}",
                                 f"number_of_per_atom_features: {number_of_per_atom_features}",
                                 f"maximum_interaction_radius: {maximum_interaction_radius}",
                                 f"element_filter: {element_filter}",
+                                "iris",
                             ]
                             run_index = f"run{count:03d}"
 

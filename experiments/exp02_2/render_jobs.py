@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # range_number_of_filters = [32]
     range_number_of_filters = [32, 64, 128, 256]
     # range_number_of_per_atom_features = [16]
-    range_number_of_per_atom_features = [32, 64, 128, 256, 512]
+    range_number_of_per_atom_features = [64, 128, 256, 512]
     range_maximum_interaction_radius = [5, 6, 7]
 
     count = 0
@@ -160,9 +160,9 @@ if __name__ == "__main__":
                         with open(config_path, "w+") as f:
                             f.write(assembled_config)
 
-                        run_locally_path = f"runs/{run_index}/run_locally.sh"
-                        with open(run_locally_path, "w+") as f:
-                            f.write(python_cmd)
+                        # run_locally_path = f"runs/{run_index}/run_locally.sh"
+                        # with open(run_locally_path, "w+") as f:
+                        #     f.write(python_cmd)
 
                         submit_slurm = f"runs/{run_index}/submit_slurm.sh"
                         with open(submit_slurm, "w+") as f:
