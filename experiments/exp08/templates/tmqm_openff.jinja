@@ -1,0 +1,20 @@
+[dataset]
+dataset_name = "tmqm_openff_local"
+version_select = "{{ version_select }}"
+num_workers = 4
+pin_memory = true
+properties_of_interest = ["atomic_numbers", "positions", "dft_total_energy", "scf_dipole", "total_charge", "lowdin_partial_charges", "per_system_spin_multiplicity", "dft_total_force"]
+element_filter = []
+local_yaml_file = "/Users/syan/workdir/modelforge-experiments/experiments/exp08/runs/cache/tmqm_openff/tmqm_openff_local.yaml" #note, this should in general be the full path to the yaml file,
+                                                        #but for testing purposes on CI, we need to use a placeholder
+                                                        #i.e., path_to_file, which the test will replace.
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "dft_total_energy"
+dipole_moment = "scf_dipole"
+partial_charges = "lowdin_partial_charges"
+total_charge= "total_charge"
+spin_multiplicity="per_system_spin_multiplicity"
+F = "dft_total_force"

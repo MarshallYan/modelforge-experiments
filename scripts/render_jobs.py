@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # input
     env = Environment(loader=FileSystemLoader("../default"))
     dataset_template = "datasets/qm9.jinja"
-    potential_template = "potentials/schnet.jinja"
+    potential_template = "potentials/aimnet2.jinja"
     runtime_template = "runtimes/runtime.jinja"
     training_template = "trainings/training.jinja"
     slurm_template = "scripts/slurm_job.jinja"

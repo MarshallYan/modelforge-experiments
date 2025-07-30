@@ -3,14 +3,14 @@
 [dataset]
 dataset_name = "QM9"
 version_select = "latest"
-num_workers = 4
+num_workers = 1
 pin_memory = true
-properties_of_interest = ["atomic_numbers", "geometry", "internal_energy_at_0K", "dipole_moment"]
+properties_of_interest = ["atomic_numbers", "positions", "internal_energy_at_0K", "dipole_moment_per_system"]
 element_filter = []
 
 [dataset.properties_assignment]
 atomic_numbers = "atomic_numbers"
-positions = "geometry"
+positions = "positions"
 E = "internal_energy_at_0K"
 
 # ============================================================ #
@@ -76,17 +76,25 @@ monitor = "val/per_system_energy/rmse"
 shift_center_of_mass_to_origin = false
 log_norm = false
 plot_frequency = 1
+gradient_clip_val = 5
 # ------------------------------------------------------------ #
+
 [training.experiment_logger]
-logger_name = "wandb"
-[training.experiment_logger.wandb_configuration]
+logger_name = "tensorboard"
+
+[training.experiment_logger.tensorboard_configuration]
 save_dir = "logs"
-project = "training"
-group = "exp01"
-log_model = true
-job_type = "testing"
-tags = ["v_0.1.0"]
-notes = "testing"
+
+#[training.experiment_logger]
+#logger_name = "wandb"
+#[training.experiment_logger.wandb_configuration]
+#save_dir = "logs"
+#project = "training"
+#group = "exp01"
+#log_model = true
+#job_type = "testing"
+#tags = ["v_0.1.0"]
+#notes = "testing"
 # ------------------------------------------------------------ #
 [training.lr_scheduler]
 scheduler_name = "ReduceLROnPlateau"
