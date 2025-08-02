@@ -3,8 +3,8 @@ potential_name = "AimNet2"
 potential_seed = 12345
 
 [potential.core_parameter]
-number_of_radial_basis_functions = {{ number_of_radial_basis_functions }}
-number_of_vector_features = {{ number_of_vector_features }}
+number_of_radial_basis_functions = 64
+number_of_vector_features = 8
 maximum_interaction_radius = "5.0 angstrom"
 number_of_interaction_modules = 3
 interaction_module_hidden_layers = [[512, 380], [512, 380], [512, 380, 380]]
@@ -20,7 +20,7 @@ activation_function_name = "GeLU"
 properties_to_featurize = ['atomic_number', "per_system_spin_state"]
 [potential.core_parameter.featurization.atomic_number]
 maximum_atomic_number = 101
-number_of_per_atom_features = {{ number_of_per_atom_features }}
+number_of_per_atom_features = 128
 
 [potential.postprocessing_parameter]
 properties_to_process = ['per_atom_energy', 'per_system_electrostatic_energy', 'per_system_vdw_energy', "sum_per_system_energy"]

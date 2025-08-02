@@ -26,7 +26,7 @@ def extract_config(config_str, key) -> dict:
         count += 1
 
         # match parentheses 
-        if extracted_string.count(']') - extracted_string.count('[') < 0 or extracted_string.count(')') - extracted_string.count('(') < 0:
+        if extracted_string.count(']') - extracted_string.count('[') < 0 or extracted_string.count(')') - extracted_string.count('(') < 0 or extracted_string.count('}') - extracted_string.count('{') < 0:
             key_end_idx = config_str.find(' ', key_end_idx + 1)
             extracted_string = config_str[key_begin_idx : key_end_idx]
 
@@ -37,7 +37,7 @@ def extract_config(config_str, key) -> dict:
         # extract dict from the extracted string
         else:
             values = extracted_string[len(key) + 1 : ]
-            tail_length = values.count(']') - values.count('[') + values.count(')') - values.count('(')
+            tail_length = values.count(']') - values.count('[') + values.count(')') - values.count('(') + values.count('}') - values.count('{')
             values = values[:len(values) - tail_length]
 
             # convert to dict
