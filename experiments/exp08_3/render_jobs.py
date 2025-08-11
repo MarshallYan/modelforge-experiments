@@ -77,10 +77,10 @@ if __name__ == "__main__":
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
     options_version_select = [
-        "full_dataset_sm1_v1.1",
-        "full_dataset_sm3_v1.1",
-        "full_dataset_sm5_v1.1",
-        "full_dataset_v1.1",
+        "sm_1_n_configs_10_v1.2",
+        "sm_3_n_configs_10_v1.2",
+        "sm_5_n_configs_10_v1.2",
+        "full_dataset_v1.2",
     ]
     options_loss_components = [
         [0.0001, 0.1, 1],
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 # config names
                 experiment_name = f"{version_select}_{loss_components}_({seed})"
                 project = "aimnet2_tmqm_openff"
-                group = "exp08_2"
+                group = "exp08_3"
                 tags = [
                     f"seed={seed}",
                     f"{version_select}",
