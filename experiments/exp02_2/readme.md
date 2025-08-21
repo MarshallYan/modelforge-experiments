@@ -1,2 +1,2 @@
 SchNet; SPICE II
-Grid search hyperparameters without per atom charge embeddings.
+Grid search hyperparameters without per system charge embeddings.
