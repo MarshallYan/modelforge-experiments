@@ -94,6 +94,7 @@ if __name__ == "__main__":
 
                         # config names
                         experiment_name = (
+                            f"qemb_"
                             f"{number_of_interaction_modules}"
                             f"_{number_of_filters}"
                             f"_{number_of_per_atom_features}"
@@ -105,7 +106,8 @@ if __name__ == "__main__":
                             f"number_of_interaction_modules: {number_of_interaction_modules}",
                             f"number_of_filters: {number_of_filters}",
                             f"number_of_per_atom_features: {number_of_per_atom_features}",
-                            f"HCNOF"
+                            f"HCNOF",
+                            f"per_system_charge_embedding"
                         ]
                         run_index = f"run{count:03d}"
 
