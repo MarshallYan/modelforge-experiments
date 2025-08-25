@@ -373,7 +373,7 @@ def test_nnp_with_fixed_tmqm_subset(
 
     # calculate MAE for the system and save
     mae = sum(abs(np.array(energy_diff))) / len(energy_diff)
-    rmse = np.sqrt(sum(np.array(energy_diff)**2)) / len(energy_diff)
+    rmse = np.sqrt(sum((np.array(energy_diff) - np.array(energy_pred))**2) / len(energy_diff))
     print(f"MAE: {mae:.4f} kJ/mol")
     print(f"RMSE: {rmse:.4f} kJ/mol")
     print("============================================================")
