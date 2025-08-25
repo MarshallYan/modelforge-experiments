@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import toml
 import torch
 from dataclasses import dataclass
 from openff.units import unit
@@ -254,6 +255,7 @@ def test_nnp_with_fixed_tmqm_subset(
         checkpoint_filename,
         dataset_filename,
         save_dir,
+        experiment_name,
         unnormalize_energy=False,
 ):
     os.makedirs(save_dir, exist_ok=True)
@@ -368,6 +370,17 @@ def test_nnp_with_fixed_tmqm_subset(
             f.write(
                 f"{molecule_names[i]}\t{energy_ref[i]}\t{energy_pred[i]}\t{energy_diff[i]}\n"
             )
+
+    # calculate MAE for the system and save
+    mae = sum(abs(np.array(energy_diff))) / len(energy_diff)
+    rmse = np.sqrt(sum(np.array(energy_diff)**2)) / len(energy_diff)
+    print(f"MAE: {mae:.4f} kJ/mol")
+    print(f"RMSE: {rmse:.4f} kJ/mol")
+    print("============================================================")
+
+    with open(os.path.join(save_dir, "mae.txt"), "w") as f:
+        f.write("name\ttest/per_system_energy_mae\ttest/per_system_energy/rmse\n")
+        f.write(f"{experiment_name}\t{mae}\t{rmse}\n")
 
 def plot_predictions_vs_reference(ref, pred, save_dir):
     ax = sns.scatterplot(
