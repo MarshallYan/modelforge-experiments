@@ -383,7 +383,7 @@ def plot_predictions_vs_reference(ref, pred, save_dir):
     ax.set_xlabel("Reference Energy (kJ/mol)")
     ax.set_ylabel("Predicted Energy (kJ/mol)")
     ax.figure.savefig(os.path.join(save_dir, "energy_pred_vs_ref_plot.png"))
-    plt.show()
+    plt.clf()
 
 def plot_histogram(
         diff,
@@ -395,4 +395,4 @@ def plot_histogram(
         ax.set_yscale("log")
 
     ax.figure.savefig(os.path.join(save_dir, "energy_histogram_plot.png"))
-    plt.show()
+    plt.clf()
