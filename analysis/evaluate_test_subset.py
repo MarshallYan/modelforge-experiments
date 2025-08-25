@@ -47,7 +47,7 @@ from modelforge.potential.potential import load_inference_model_from_checkpoint
 import torch
 
 
-filename = "/home/cri/training_tests/tmqm_openff_aimnet2_july/logs/all/AimNet2_tmqm_openff_local/version_0/checkpoints/best_AimNet2-tmqm_openff_local-epoch=48.ckpt"
+filename = "/Users/syan/workdir/modelforge-experiments/experiments/exp08_3/runs/run077/logs/aimnet2_tmqm_openff/bqftyw6v/checkpoints/best_AimNet2-tmqm_openff_local-epoch=67.ckpt"
 
 potential = load_inference_model_from_checkpoint(filename, jit=False)
 potential.to(device="cuda" if torch.cuda.is_available() else "cpu")
@@ -59,7 +59,7 @@ unnormalize_energy = False
 import h5py
 
 # define the input file name of the hdf5 file that contains the fixed test subset
-input_filename = "/home/cri/mf_datasets/hdf5_files/qm9_tmqm_openff_tests/tmqm_openff_fixed_test_subset_sm_1_v1.2.hdf5"
+input_filename = "/Users/syan/workdir/modelforge-experiments/experiments/exp08_3/cache/fixed_test_subset/fixed_test_subset_v1.2.hdf5"
 
 
 from tqdm import tqdm
