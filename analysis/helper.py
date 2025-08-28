@@ -62,8 +62,8 @@ def extract_config(config_str, key) -> dict:
                 except ValueError:
                     try:
                         values = eval(values)
-                    except NameError:
-                        pass
+                    except:
+                        print(values)
             result = {key: values}
             return result
 
@@ -379,7 +379,7 @@ def test_nnp_with_fixed_tmqm_subset(
     print("============================================================")
 
     with open(os.path.join(save_dir, "mae.txt"), "w") as f:
-        f.write("name\ttest/per_system_energy_mae\ttest/per_system_energy/rmse\n")
+        f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\n")
         f.write(f"{experiment_name}\t{mae}\t{rmse}\n")
 
 def plot_predictions_vs_reference(ref, pred, save_dir):

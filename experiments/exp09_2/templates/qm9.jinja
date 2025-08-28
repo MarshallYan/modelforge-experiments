@@ -1,0 +1,14 @@
+[dataset]
+dataset_name = "QM9"
+version_select = "latest"
+num_workers = 4
+pin_memory = true
+properties_of_interest = ["atomic_numbers", "positions", "internal_energy_at_0K", "partial_charges", "dipole_moment_per_system"]
+element_filter = []
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "internal_energy_at_0K"
+dipole_moment = "dipole_moment_per_system"
+partial_charges = "partial_charges"
