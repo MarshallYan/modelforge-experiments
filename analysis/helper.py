@@ -20,8 +20,17 @@ from modelforge.dataset.utils import _ATOMIC_NUMBER_TO_ELEMENT
 from modelforge.dataset.utils import RandomRecordSplittingStrategy
 from modelforge.dataset.utils import FirstComeFirstServeSplittingStrategy
 from modelforge.dataset.utils import SplittingStrategy
+from modelforge.curate.datasets.tmqm_openff_curation import tmQMOpenFFCuration
+from modelforge.curate.properties import (
+    AtomicNumbers,
+    PartialCharges,
+    Positions,
+    DipoleMomentPerSystem,
+    DipoleMomentScalarPerSystem,
+)
 from modelforge.potential.potential import load_inference_model_from_checkpoint
-from modelforge.utils.prop import NNPInput, PropertyNames
+from modelforge.train.training import CalculateProperties
+from modelforge.utils.prop import BatchData, NNPInput, PropertyNames
 
 
 def extract_config(config_str, key) -> dict:
@@ -294,6 +303,12 @@ def test_nnp_with_fixed_tmqm_subset(
     energy_diff = []
     energy_ref = []
     energy_pred = []
+    dipole_moment_diff = []
+    dipole_moment_ref = []
+    dipole_moment_pred = []
+    partial_charge_diff = []
+    partial_charge_ref = []
+    partial_charge_pred = []
 
     molecule_names = []
     with h5py.File(dataset_filename, "r") as f:
@@ -315,9 +330,11 @@ def test_nnp_with_fixed_tmqm_subset(
             number_of_atoms = atomic_numbers.shape[0]
             n_configs = f[key]["n_configs"][()]
             spin_multiplicity = f[key]["per_system_spin_multiplicity"][()]
+            dipole_moment = f[key]["scf_dipole"][()]
+            partial_charge = f[key]["lowdin_partial_charges"][()]
 
             for n_config in range(n_configs):
-                # print(f"Processing config {n_config} of {n_configs}")
+                print(f"Processing config {n_config} of {n_configs}")
 
                 # could create a helper function to convert a record to NNPInput based on the properties association dict in
                 # the toml files.
@@ -342,6 +359,7 @@ def test_nnp_with_fixed_tmqm_subset(
                 molecule_names.append(key)
                 output = potential(nnp_input)
 
+                # test energy results
                 energy_temp = (
                     output["per_system_energy"].cpu().detach().numpy().reshape(-1)[0]
                 )
@@ -358,6 +376,38 @@ def test_nnp_with_fixed_tmqm_subset(
                 energy_diff.append(float((energy_temp - energy[n_config].m).reshape(-1)[0]))
                 energy_pred.append(float(energy_temp.reshape(-1)[0]))
                 energy_ref.append(float(energy[n_config].m.reshape(-1)[0]))
+
+                # test partial charge results
+                partial_charge_temps = output["per_atom_charge"].cpu().detach().numpy().reshape(-1)[0]
+                partial_charge_diff.append(float((partial_charge_temps - partial_charge[n_config]).reshape(-1)[0]))
+                partial_charge_pred.append(float(partial_charge_temps.reshape(-1)[0]))
+                partial_charge_ref.append(float(partial_charge[n_config].reshape(-1)[0]))
+
+                # test dipole moment results
+                dipole_moment_temp = CalculateProperties._predict_dipole_moment(
+                    model_predictions=output,
+                    batch=BatchData(nnp_input=nnp_input, metadata=None),  # _predict_dipole_moment only uses nnp_input
+                )
+                # print(dipole_moment_temp)
+
+                # Do I need to shift the center of mass to the origin?
+                # dc = tmQMOpenFFCuration("tmqm_openff")
+                # dipole_moment_temp = dc.compute_dipole_moment(
+                #     atomic_numbers=AtomicNumbers(value=nnp_input.atomic_numbers.cpu().detach().numpy().reshape(-1, 1)),
+                #     partial_charges=PartialCharges(
+                #         value=partial_charge_temps.reshape(1, -1, 1),
+                #         units=unit.Unit(f[key]["lowdin_partial_charges"].attrs["u"])
+                #     ),
+                #     positions=Positions(
+                #         value=nnp_input.positions.cpu().detach().numpy().reshape(1, -1, 3),
+                #         units=unit.Unit(f[key]["positions"].attrs["u"])
+                #     ),
+                # )
+                # print(dipole_moment_temp)
+
+                dipole_moment_diff.append()
+                dipole_moment_ref.append(list(dipole_moment[n_config]))
+                # print(dipole_moment_ref[-1])
 
     # plot and save
     plot_predictions_vs_reference(energy_ref, energy_pred, save_dir)
