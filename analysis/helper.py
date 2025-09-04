@@ -314,7 +314,7 @@ def test_nnp_with_fixed_tmqm_subset(
     with h5py.File(dataset_filename, "r") as f:
         keys = list(f.keys())
 
-        for key in tqdm(keys):
+        for key in tqdm(keys[:10]):
 
             # grab all the data from the hdf5 file
             # we could certainly write some helper functions to do this better
@@ -334,7 +334,7 @@ def test_nnp_with_fixed_tmqm_subset(
             partial_charge = f[key]["lowdin_partial_charges"][()]
 
             for n_config in range(n_configs):
-                print(f"Processing config {n_config} of {n_configs}")
+                # print(f"Processing config {n_config} of {n_configs}")
 
                 # could create a helper function to convert a record to NNPInput based on the properties association dict in
                 # the toml files.
@@ -378,43 +378,48 @@ def test_nnp_with_fixed_tmqm_subset(
                 energy_ref.append(float(energy[n_config].m.reshape(-1)[0]))
 
                 # test partial charge results
-                partial_charge_temps = output["per_atom_charge"].cpu().detach().numpy().reshape(-1)[0]
-                partial_charge_diff.append(float((partial_charge_temps - partial_charge[n_config]).reshape(-1)[0]))
-                partial_charge_pred.append(float(partial_charge_temps.reshape(-1)[0]))
-                partial_charge_ref.append(float(partial_charge[n_config].reshape(-1)[0]))
+                partial_charge_temps = output["per_atom_charge"].cpu().detach().numpy().reshape(-1)
+                partial_charge_diff.append((partial_charge_temps - partial_charge[n_config]).reshape(-1))
+                partial_charge_pred.append(partial_charge_temps.reshape(-1))
+                partial_charge_ref.append(partial_charge[n_config].reshape(-1))
 
                 # test dipole moment results
-                dipole_moment_temp = CalculateProperties._predict_dipole_moment(
-                    model_predictions=output,
-                    batch=BatchData(nnp_input=nnp_input, metadata=None),  # _predict_dipole_moment only uses nnp_input
-                )
-                # print(dipole_moment_temp)
+                dc = tmQMOpenFFCuration("tmqm_openff")
+                dipole_moment_temp = dc.compute_dipole_moment(
+                    atomic_numbers=AtomicNumbers(value=nnp_input.atomic_numbers.cpu().detach().numpy().reshape(-1, 1)),
+                    partial_charges=PartialCharges(
+                        value=partial_charge_temps.reshape(1, -1, 1),
+                        units=unit.Unit(f[key]["lowdin_partial_charges"].attrs["u"])
+                    ),
+                    positions=Positions(
+                        value=nnp_input.positions.cpu().detach().numpy().reshape(1, -1, 3),
+                        units=unit.Unit(f[key]["positions"].attrs["u"])
+                    ),
+                ).value
 
-                # Do I need to shift the center of mass to the origin?
-                # dc = tmQMOpenFFCuration("tmqm_openff")
-                # dipole_moment_temp = dc.compute_dipole_moment(
-                #     atomic_numbers=AtomicNumbers(value=nnp_input.atomic_numbers.cpu().detach().numpy().reshape(-1, 1)),
-                #     partial_charges=PartialCharges(
-                #         value=partial_charge_temps.reshape(1, -1, 1),
-                #         units=unit.Unit(f[key]["lowdin_partial_charges"].attrs["u"])
-                #     ),
-                #     positions=Positions(
-                #         value=nnp_input.positions.cpu().detach().numpy().reshape(1, -1, 3),
-                #         units=unit.Unit(f[key]["positions"].attrs["u"])
-                #     ),
-                # )
-                # print(dipole_moment_temp)
-
-                dipole_moment_diff.append()
+                dipole_moment_diff.append(list(dipole_moment_temp - dipole_moment[n_config]))
+                dipole_moment_pred.append(list(dipole_moment_temp))
                 dipole_moment_ref.append(list(dipole_moment[n_config]))
-                # print(dipole_moment_ref[-1])
 
     # plot and save
-    plot_predictions_vs_reference(energy_ref, energy_pred, save_dir)
-    plot_histogram(energy_diff, save_dir)
+    plot_predictions_vs_reference(
+        energy_ref,
+        energy_pred,
+        save_dir,
+        "energy_pred_vs_ref_plot.png",
+        "Reference Energy (kJ/mol)",
+        "Predicted Energy (kJ/mol)",
+    )
+    plot_histogram(
+        energy_diff,
+        save_dir,
+        "energy_histogram.png",
+        "Energy Difference (kJ/mol)",
+        "Counts",
+    )
 
     # save to file the data include the name of the molecule
-    with open(os.path.join(save_dir, "energy_diff.txt"), "w") as f:
+    with open(os.path.join(save_dir, "ref_pred_diff.txt"), "w") as f:
         f.write("molecule_names\tenergy_ref\tenergy_pred\tenergy_diff\n")
         for i in range(len(energy_diff)):
             f.write(
@@ -422,17 +427,32 @@ def test_nnp_with_fixed_tmqm_subset(
             )
 
     # calculate MAE for the system and save
-    mae = sum(abs(np.array(energy_diff))) / len(energy_diff)
-    rmse = np.sqrt(sum((np.array(energy_diff) - np.array(energy_pred))**2) / len(energy_diff))
-    print(f"MAE: {mae:.4f} kJ/mol")
-    print(f"RMSE: {rmse:.4f} kJ/mol")
+    energy_mae = sum(abs(np.array(energy_diff))) / len(energy_diff)
+    energy_rmse = np.sqrt(sum((np.array(energy_diff))**2) / len(energy_diff))
+    partial_charge_mae = 0
+    partial_charge_rmse = 0
+    dipole_moment_mae = 0
+    dipole_moment_rmse = 0
+    for i in range(len(partial_charge_diff)):
+        partial_charge_mae += np.linalg.norm(abs(np.array(partial_charge_diff[i])))
+        partial_charge_rmse += np.linalg.norm(np.array(partial_charge_diff[i]) ** 2)
+    partial_charge_mae /= len(partial_charge_diff)
+    partial_charge_rmse = np.sqrt(partial_charge_rmse / len(partial_charge_diff))
+    for i in range(len(dipole_moment_diff)):
+        dipole_moment_mae += np.linalg.norm(abs(np.array(dipole_moment_diff[i])))
+        dipole_moment_rmse += np.linalg.norm(np.array(dipole_moment_diff[i]) ** 2)
+    dipole_moment_mae /= len(dipole_moment_diff)
+    dipole_moment_rmse = np.sqrt(dipole_moment_rmse / len(dipole_moment_diff))
+
+    print(f"MAE: {energy_mae:.4f} kJ/mol; {partial_charge_mae:.4f} e; {dipole_moment_mae:.4f} e*nm")
+    print(f"RMSE: {energy_rmse:.4f} kJ/mol; {partial_charge_rmse:.4f} e; {dipole_moment_rmse:.4f} e*nm")
     print("============================================================")
 
     with open(os.path.join(save_dir, "mae.txt"), "w") as f:
-        f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\n")
-        f.write(f"{experiment_name}\t{mae}\t{rmse}\n")
+        f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\ttest/per_atom_charge/mae\ttest/per_atom_charge/rmse\ttest/per_system_dipole_moment/mae\ttest/per_system_dipole_moment/rmse\n")
+        f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\n")
 
-def plot_predictions_vs_reference(ref, pred, save_dir):
+def plot_predictions_vs_reference(ref, pred, save_dir, filename, xlabel, ylabel):
     ax = sns.scatterplot(
         x=ref,
         y=pred,
@@ -443,19 +463,25 @@ def plot_predictions_vs_reference(ref, pred, save_dir):
         y=[min(min(ref), min(pred)), max(max(ref), max(pred))],
         color='red',
     )
-    ax.set_xlabel("Reference Energy (kJ/mol)")
-    ax.set_ylabel("Predicted Energy (kJ/mol)")
-    ax.figure.savefig(os.path.join(save_dir, "energy_pred_vs_ref_plot.png"))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.figure.savefig(os.path.join(save_dir, filename))
     plt.clf()
 
 def plot_histogram(
         diff,
         save_dir,
+        filename,
+        xlabel,
+        ylabel,
+        bins=100,
         log_y_scale=True,
 ):
-    ax = sns.histplot(data=diff)
+    ax = sns.histplot(data=diff, bins=bins)
     if log_y_scale:
         ax.set_yscale("log")
 
-    ax.figure.savefig(os.path.join(save_dir, "energy_histogram_plot.png"))
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.figure.savefig(os.path.join(save_dir, filename))
     plt.clf()
