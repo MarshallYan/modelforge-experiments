@@ -314,7 +314,7 @@ def test_nnp_with_fixed_tmqm_subset(
     with h5py.File(dataset_filename, "r") as f:
         keys = list(f.keys())
 
-        for key in tqdm(keys[:10]):
+        for key in tqdm(keys):
 
             # grab all the data from the hdf5 file
             # we could certainly write some helper functions to do this better
@@ -429,20 +429,33 @@ def test_nnp_with_fixed_tmqm_subset(
     # calculate MAE for the system and save
     energy_mae = sum(abs(np.array(energy_diff))) / len(energy_diff)
     energy_rmse = np.sqrt(sum((np.array(energy_diff))**2) / len(energy_diff))
-    partial_charge_mae = 0
-    partial_charge_rmse = 0
+
+
+    partial_charge_diff = np.concatenate(partial_charge_diff)
+    partial_charge_mae = sum(abs(np.array(partial_charge_diff))) / len(partial_charge_diff)
+    partial_charge_rmse = np.sqrt(sum((np.array(partial_charge_diff))**2) / len(partial_charge_diff))
+
+
+    # dipole_moment_diff = np.array(dipole_moment_diff).reshape(-1)
+    # dipole_moment_mae = sum(abs(np.array(dipole_moment_diff))) / len(dipole_moment_diff)
+    # dipole_moment_rmse = np.sqrt(sum(np.array(dipole_moment_diff))) / len(dipole_moment_diff)
+
+
+    # partial_charge_mae = 0
+    # partial_charge_rmse = 0
     dipole_moment_mae = 0
     dipole_moment_rmse = 0
-    for i in range(len(partial_charge_diff)):
-        partial_charge_mae += np.linalg.norm(abs(np.array(partial_charge_diff[i])))
-        partial_charge_rmse += np.linalg.norm(np.array(partial_charge_diff[i]) ** 2)
-    partial_charge_mae /= len(partial_charge_diff)
-    partial_charge_rmse = np.sqrt(partial_charge_rmse / len(partial_charge_diff))
+    # for i in range(len(partial_charge_diff)):
+    #     partial_charge_mae += np.linalg.norm(abs(np.array(partial_charge_diff[i])))
+    #     partial_charge_rmse += np.linalg.norm(np.array(partial_charge_diff[i]) ** 2)
+    # partial_charge_mae /= len(partial_charge_diff)
+    # partial_charge_rmse = np.sqrt(partial_charge_rmse / len(partial_charge_diff))
     for i in range(len(dipole_moment_diff)):
-        dipole_moment_mae += np.linalg.norm(abs(np.array(dipole_moment_diff[i])))
-        dipole_moment_rmse += np.linalg.norm(np.array(dipole_moment_diff[i]) ** 2)
+        dipole_moment_mae += abs(np.linalg.norm(dipole_moment_pred[i]) - np.linalg.norm(dipole_moment_ref[i]))
+        dipole_moment_rmse += (np.linalg.norm(dipole_moment_pred[i]) - np.linalg.norm(dipole_moment_ref[i])) ** 2
     dipole_moment_mae /= len(dipole_moment_diff)
     dipole_moment_rmse = np.sqrt(dipole_moment_rmse / len(dipole_moment_diff))
+
 
     print(f"MAE: {energy_mae:.4f} kJ/mol; {partial_charge_mae:.4f} e; {dipole_moment_mae:.4f} e*nm")
     print(f"RMSE: {energy_rmse:.4f} kJ/mol; {partial_charge_rmse:.4f} e; {dipole_moment_rmse:.4f} e*nm")
@@ -450,7 +463,7 @@ def test_nnp_with_fixed_tmqm_subset(
 
     with open(os.path.join(save_dir, "mae.txt"), "w") as f:
         f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\ttest/per_atom_charge/mae\ttest/per_atom_charge/rmse\ttest/per_system_dipole_moment/mae\ttest/per_system_dipole_moment/rmse\n")
-        f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\n")
+        f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\t{partial_charge_mae}\t{partial_charge_rmse}\t{dipole_moment_mae}\t{dipole_moment_rmse}\n")
 
 def plot_predictions_vs_reference(ref, pred, save_dir, filename, xlabel, ylabel):
     ax = sns.scatterplot(
