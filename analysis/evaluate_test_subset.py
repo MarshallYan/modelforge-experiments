@@ -47,7 +47,7 @@ from modelforge.potential.potential import load_inference_model_from_checkpoint
 import torch
 
 
-filename = "/Users/syan/workdir/modelforge-experiments/experiments/exp08_3/runs/run077/logs/aimnet2_tmqm_openff/bqftyw6v/checkpoints/best_AimNet2-tmqm_openff_local-epoch=67.ckpt"
+filename = "/experiments/exp08_3/run_sm135/run077/logs/aimnet2_tmqm_openff/bqftyw6v/checkpoints/best_AimNet2-tmqm_openff_local-epoch=67.ckpt"
 
 potential = load_inference_model_from_checkpoint(filename, jit=False)
 potential.to(device="cuda" if torch.cuda.is_available() else "cpu")

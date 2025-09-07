@@ -1,14 +1,16 @@
 import glob
 import os
+import sys
+sys.path.append('../../../analysis')
 
 import toml
 
 import helper
 
-exp = "exp08_3"
-dataset_filename = f"../experiments/{exp}/cache/fixed_test_subset/fixed_test_subset_v1.2.hdf5"
-ckpt_list = sorted(glob.glob(f"../experiments/{exp}/runs/*/logs/aimnet2_tmqm_openff/*/checkpoints/*"))
-print(ckpt_list)
+
+dataset_filename = f"../cache/fixed_test_subset/fixed_test_subset_sm_1_v1.2.hdf5"
+ckpt_list = sorted(glob.glob(f"./run*/logs/aimnet2_tmqm_openff/*/checkpoints/*"))
+# print(ckpt_list)
 
 # do tests with each checkpoint file
 for i, ckpt in enumerate(ckpt_list):
@@ -18,7 +20,7 @@ for i, ckpt in enumerate(ckpt_list):
     run_log_path = os.path.dirname(
         os.path.dirname(ckpt)
     )
-    if i == len(ckpt_list):
+    if i == len(ckpt_list) - 1:
         pass
     else:
         if run_log_path == os.path.dirname(
