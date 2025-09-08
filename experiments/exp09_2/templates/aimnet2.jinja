@@ -22,7 +22,7 @@ maximum_atomic_number = 101
 number_of_per_atom_features = {{ number_of_per_atom_features }}
 
 [potential.postprocessing_parameter]
-properties_to_process = ['per_atom_energy', 'per_system_electrostatic_energy', 'per_system_vdw_energy', "sum_per_system_energy"]
+properties_to_process = ['per_atom_energy']
 
 [potential.postprocessing_parameter.per_atom_energy]
 normalize = false
@@ -32,9 +32,3 @@ keep_per_atom_property = true
 [potential.postprocessing_parameter.per_system_electrostatic_energy]
 electrostatic_strategy = "coulomb"
 maximum_interaction_radius = "15.0 angstrom"
-
-[potential.postprocessing_parameter.per_system_vdw_energy]
-maximum_interaction_radius = "10.0 angstrom"
-
-[potential.postprocessing_parameter.sum_per_system_energy]
-contributions = ['per_system_electrostatic_energy', 'per_system_vdw_energy']
