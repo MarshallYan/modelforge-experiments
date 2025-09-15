@@ -1,2 +1,2 @@
-AIMNet2 SPICE II
-Hyperparameter search.
+AIMNet2 QM9
+Hyperparameter search (charge interactions are ignores).
