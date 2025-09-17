@@ -432,13 +432,13 @@ def test_nnp_with_fixed_tmqm_subset(
 
 
     partial_charge_diff = np.concatenate(partial_charge_diff)
-    partial_charge_mae = np.sum(abs(np.array(partial_charge_diff))) / len(partial_charge_diff)
-    partial_charge_rmse = np.sqrt(np.sum((np.array(partial_charge_diff))**2) / len(partial_charge_diff))
+    partial_charge_mae = np.mean(np.abs(np.array(partial_charge_diff)))
+    partial_charge_rmse = np.sqrt(np.mean((np.array(partial_charge_diff))**2))
 
 
     dipole_moment_diff = np.array(dipole_moment_diff).reshape(-1)
-    dipole_moment_mae = np.sum(abs(np.array(dipole_moment_diff))) / len(dipole_moment_diff)
-    dipole_moment_rmse = np.sqrt(np.sum((np.array(dipole_moment_diff))**2) / len(dipole_moment_diff))
+    dipole_moment_mae = np.mean(np.abs(np.array(dipole_moment_diff)))
+    dipole_moment_rmse = np.sqrt(np.mean((np.array(dipole_moment_diff))**2))
 
 
     # partial_charge_mae = 0
