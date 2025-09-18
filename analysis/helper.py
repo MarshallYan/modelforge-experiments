@@ -379,7 +379,7 @@ def test_nnp_with_fixed_tmqm_subset(
 
                 # test partial charge results
                 partial_charge_temps = output["per_atom_charge"].cpu().detach().numpy().reshape(-1)
-                partial_charge_diff.append((partial_charge_temps - partial_charge[n_config]).reshape(-1))
+                partial_charge_diff.append(partial_charge_temps - partial_charge[n_config].reshape(-1))
                 partial_charge_pred.append(partial_charge_temps.reshape(-1))
                 partial_charge_ref.append(partial_charge[n_config].reshape(-1))
 
@@ -433,37 +433,23 @@ def test_nnp_with_fixed_tmqm_subset(
 
     partial_charge_diff = np.concatenate(partial_charge_diff)
     partial_charge_mae = np.mean(np.abs(np.array(partial_charge_diff)))
-    partial_charge_rmse = np.sqrt(np.mean((np.array(partial_charge_diff))**2))
+    # partial_charge_rmse = np.sqrt(np.mean((np.array(partial_charge_diff))**2))
 
 
     dipole_moment_diff = np.array(dipole_moment_diff).reshape(-1)
     dipole_moment_mae = np.mean(np.abs(np.array(dipole_moment_diff)))
-    dipole_moment_rmse = np.sqrt(np.mean((np.array(dipole_moment_diff))**2))
-
-
-    # partial_charge_mae = 0
-    # partial_charge_rmse = 0
-    # dipole_moment_mae = 0
-    # dipole_moment_rmse = 0
-    # for i in range(len(partial_charge_diff)):
-    #     partial_charge_mae += np.linalg.norm(abs(np.array(partial_charge_diff[i])))
-    #     partial_charge_rmse += np.linalg.norm(np.array(partial_charge_diff[i]) ** 2)
-    # partial_charge_mae /= len(partial_charge_diff)
-    # partial_charge_rmse = np.sqrt(partial_charge_rmse / len(partial_charge_diff))
-    # for i in range(len(dipole_moment_diff)):
-    #     dipole_moment_mae += abs(np.linalg.norm(dipole_moment_pred[i]) - np.linalg.norm(dipole_moment_ref[i]))
-    #     dipole_moment_rmse += (np.linalg.norm(dipole_moment_pred[i]) - np.linalg.norm(dipole_moment_ref[i])) ** 2
-    # dipole_moment_mae /= len(dipole_moment_diff)
-    # dipole_moment_rmse = np.sqrt(dipole_moment_rmse / len(dipole_moment_diff))
+    # dipole_moment_rmse = np.sqrt(np.mean((np.array(dipole_moment_diff))**2))
 
 
     print(f"MAE: {energy_mae:.4f} kJ/mol; {partial_charge_mae:.4f} e; {dipole_moment_mae:.4f} e*nm")
-    print(f"RMSE: {energy_rmse:.4f} kJ/mol; {partial_charge_rmse:.4f} e; {dipole_moment_rmse:.4f} e*nm")
+    # print(f"RMSE: {energy_rmse:.4f} kJ/mol; {partial_charge_rmse:.4f} e; {dipole_moment_rmse:.4f} e*nm")
     print("============================================================")
 
     with open(os.path.join(save_dir, "mae.txt"), "w") as f:
-        f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\ttest/per_atom_charge/mae\ttest/per_atom_charge/rmse\ttest/per_system_dipole_moment/mae\ttest/per_system_dipole_moment/rmse\n")
-        f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\t{partial_charge_mae}\t{partial_charge_rmse}\t{dipole_moment_mae}\t{dipole_moment_rmse}\n")
+        f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\ttest/per_atom_charge/mae\ttest/per_system_dipole_moment/mae\n")
+        # f.write("name\ttest/per_system_energy/mae\ttest/per_system_energy/rmse\ttest/per_atom_charge/mae\ttest/per_atom_charge/rmse\ttest/per_system_dipole_moment/mae\ttest/per_system_dipole_moment/rmse\n")
+        f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\t{partial_charge_mae}\t{dipole_moment_mae}\n")
+        # f.write(f"{experiment_name}\t{energy_mae}\t{energy_rmse}\t{partial_charge_mae}\t{partial_charge_rmse}\t{dipole_moment_mae}\t{dipole_moment_rmse}\n")
 
 def plot_predictions_vs_reference(ref, pred, save_dir, filename, xlabel, ylabel):
     ax = sns.scatterplot(

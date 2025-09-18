@@ -10,7 +10,12 @@ import helper
 
 dataset_filename = f"../cache/fixed_test_subset/fixed_test_subset_sm_5_v1.2.hdf5"
 ckpt_list = sorted(glob.glob(f"./run*/logs/aimnet2_tmqm_openff/*/checkpoints/*"))
-# print(ckpt_list)
+output_file = open("test.log", "w")
+
+# Store the original stdout
+original_stdout = sys.stdout
+# Redirect stdout to the file
+sys.stdout = output_file
 
 # do tests with each checkpoint file
 for i, ckpt in enumerate(ckpt_list):
@@ -52,3 +57,7 @@ for i, ckpt in enumerate(ckpt_list):
         save_dir,
         experiment_name,
     )
+
+# Restore original stdout
+sys.stdout = original_stdout
+output_file.close()
