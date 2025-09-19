@@ -77,9 +77,6 @@ if __name__ == "__main__":
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
     options_version_select = [
-        "sm_1_n_configs_10_v1.2",
-        "sm_3_n_configs_10_v1.2",
-        "sm_5_n_configs_10_v1.2",
         "full_dataset_v1.2",
     ]
     options_loss_components = [
