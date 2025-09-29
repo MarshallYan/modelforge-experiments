@@ -78,9 +78,10 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    range_number_of_radial_basis_functions = [32, 64, 128, 256]
-    range_number_of_vector_features = [4, 8, 16, 32, 64]
-    range_number_of_per_atom_features = [64, 128, 256, 512]
+    range_number_of_radial_basis_functions = [64]
+    range_number_of_vector_features = [8]
+    range_number_of_per_atom_features = [512]
+    range
 
     count = 0
     for seed in range_seed:

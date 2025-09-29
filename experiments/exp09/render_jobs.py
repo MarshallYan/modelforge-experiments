@@ -78,9 +78,9 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    range_number_of_radial_basis_functions = [16, 32, 64, 128]
+    range_number_of_radial_basis_functions = [32, 64, 128, 256]
     range_number_of_vector_features = [4, 8, 16, 32]
-    range_number_of_per_atom_features = [256, 512, 1024, 2048]
+    range_number_of_per_atom_features = [64, 128, 256, 512]
 
     count = 0
     for seed in range_seed:
@@ -89,7 +89,7 @@ if __name__ == "__main__":
                 for number_of_per_atom_features in range_number_of_per_atom_features:
 
                     # config names
-                    experiment_name = f"09_{number_of_radial_basis_functions}_{number_of_vector_features}_{number_of_per_atom_features}({seed})"
+                    experiment_name = f"09_{number_of_radial_basis_functions}_{number_of_vector_features}_{number_of_per_atom_features}_({seed})"
                     project = "aimnet2_qm9"
                     group = "exp09"
                     tags = [
