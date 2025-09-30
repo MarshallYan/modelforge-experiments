@@ -109,7 +109,7 @@ if __name__ == "__main__":
                         # config names
                         experiment_name = f"09(2)_{interaction_module_hidden_layers}({seed})"
                         project = "aimnet2_qm9"
-                        group = "exp09_2"
+                        group = "exp09_4"
                         tags = [
                             f"{seed=}",
                             f"{number_of_radial_basis_functions=}",
