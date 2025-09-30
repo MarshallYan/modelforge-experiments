@@ -1,0 +1,15 @@
+[dataset]
+dataset_name = "SPICE2"
+version_select = "full_dataset_HCNOF_v1.1"
+num_workers = 4
+pin_memory = true
+properties_of_interest = ["atomic_numbers", "positions", "dft_total_energy", "dft_total_force", "total_charge", "scf_dipole"]
+element_filter = []
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "dft_total_energy"
+F = "dft_total_force"
+total_charge = "total_charge"
+dipole_moment = "scf_dipole"

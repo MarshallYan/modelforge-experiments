@@ -70,7 +70,7 @@ def render_slurm_job(
 if __name__ == "__main__":
     # input
     env = Environment(loader=FileSystemLoader("templates"))
-    dataset_template = "qm9.jinja"
+    dataset_template = "spice2.jinja"
     potential_template = "schnet.jinja"
     runtime_template = "runtime.jinja"
     training_template = "training.jinja"

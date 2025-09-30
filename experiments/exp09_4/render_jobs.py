@@ -15,12 +15,14 @@ def render_potential(
         number_of_radial_basis_functions: int,
         number_of_vector_features: int,
         number_of_per_atom_features: int,
+        interaction_module_hidden_layers: list,
 ):
     template = environment.get_template(template_path)
     config = template.render(
         number_of_radial_basis_functions=number_of_radial_basis_functions,
         number_of_vector_features=number_of_vector_features,
         number_of_per_atom_features=number_of_per_atom_features,
+        interaction_module_hidden_layers=interaction_module_hidden_layers,
     )
     return config
 
@@ -81,80 +83,97 @@ if __name__ == "__main__":
     range_number_of_radial_basis_functions = [64]
     range_number_of_vector_features = [8]
     range_number_of_per_atom_features = [512]
-    range
+    options_interaction_module_hidden_layers = [
+        # add/remove [512, 380]
+        [[512, 380], [512, 380, 380]],
+        [[512, 380], [512, 380], [512, 380, 380]],
+        [[512, 380], [512, 380], [512, 380], [512, 380, 380]],
+        [[512, 380], [512, 380], [512, 380], [512, 380], [512, 380, 380]],
+
+        # fix 3 interaction layers
+        [[256, 128], [256, 128], [256, 128, 128]],
+        [[512, 256], [512, 256], [512, 256, 256]],
+        [[512, 512], [512, 512], [512, 256, 128]],
+        [[1024, 512], [512, 256], [256, 128, 64]],
+        [[1024, 512], [1024, 512], [1024, 512, 512]],
+        [[2048, 512], [2048, 512], [2048, 512, 512]],
+    ]
 
     count = 0
     for seed in range_seed:
         for number_of_radial_basis_functions in range_number_of_radial_basis_functions:
             for number_of_vector_features in range_number_of_vector_features:
                 for number_of_per_atom_features in range_number_of_per_atom_features:
+                    for interaction_module_hidden_layers in options_interaction_module_hidden_layers:
 
-                    # config names
-                    experiment_name = f"09(2)_{number_of_radial_basis_functions}_{number_of_vector_features}_{number_of_per_atom_features}({seed})"
-                    project = "aimnet2_qm9"
-                    group = "exp09_2"
-                    tags = [
-                        f"{seed=}",
-                        f"{number_of_radial_basis_functions=}",
-                        f"{number_of_vector_features=}",
-                        f"{number_of_per_atom_features=}",
-                    ]
+                        # config names
+                        experiment_name = f"09(2)_{interaction_module_hidden_layers}({seed})"
+                        project = "aimnet2_qm9"
+                        group = "exp09_2"
+                        tags = [
+                            f"{seed=}",
+                            f"{number_of_radial_basis_functions=}",
+                            f"{number_of_vector_features=}",
+                            f"{number_of_per_atom_features=}",
+                            f"{interaction_module_hidden_layers=}",
+                        ]
 
-                    run_index = f"run{count:03d}"
+                        run_index = f"run{count:03d}"
 
-                    assembled_config = (
-                        f"# ============================================================ #\n\n"
-                        f"{render_dataset(env, dataset_template)}\n"
-                        f"\n\n# ============================================================ #\n\n"
-                        f"""{render_potential(
+                        assembled_config = (
+                            f"# ============================================================ #\n\n"
+                            f"{render_dataset(env, dataset_template)}\n"
+                            f"\n\n# ============================================================ #\n\n"
+                            f"""{render_potential(
+                                env,
+                                potential_template,
+                                number_of_radial_basis_functions=number_of_radial_basis_functions,
+                                number_of_vector_features=number_of_vector_features,
+                                number_of_per_atom_features=number_of_per_atom_features,
+                                interaction_module_hidden_layers=interaction_module_hidden_layers,
+                            )}"""
+                            f"\n\n# ============================================================ #\n\n"
+                            f"{render_runtime(env, runtime_template, experiment_name)}"
+                            f"\n\n# ============================================================ #\n\n"
+                            f"""{render_training(
+                                env, 
+                                training_template, 
+                                project,
+                                group,
+                                tags,
+                                seed,
+                            )}"""
+                            f"\n\n# ============================================================ #\n"
+                        )
+
+                        python_cmd = (
+                            f"python ../../../../scripts/perform_training.py "
+                            f"--condensed_config_path config.toml "
+                            f"--accelerator 'gpu' --device [0]"
+                        )
+
+                        slurm_script = render_slurm_job(
                             env,
-                            potential_template,
-                            number_of_radial_basis_functions=number_of_radial_basis_functions,
-                            number_of_vector_features=number_of_vector_features,
-                            number_of_per_atom_features=number_of_per_atom_features,
-                        )}"""
-                        f"\n\n# ============================================================ #\n\n"
-                        f"{render_runtime(env, runtime_template, experiment_name)}"
-                        f"\n\n# ============================================================ #\n\n"
-                        f"""{render_training(
-                            env, 
-                            training_template, 
-                            project,
-                            group,
-                            tags,
-                            seed,
-                        )}"""
-                        f"\n\n# ============================================================ #\n"
-                    )
+                            slurm_template,
+                            job_name=run_index,
+                            python_cmd=python_cmd,
+                            run_index=run_index,
+                        )
 
-                    python_cmd = (
-                        f"python ../../../../scripts/perform_training.py "
-                        f"--condensed_config_path config.toml "
-                        f"--accelerator 'gpu' --device [0]"
-                    )
+                        # output
+                        config_path = f"runs/{run_index}/config.toml"
+                        os.makedirs(os.path.dirname(config_path), exist_ok=True)
 
-                    slurm_script = render_slurm_job(
-                        env,
-                        slurm_template,
-                        job_name=run_index,
-                        python_cmd=python_cmd,
-                        run_index=run_index,
-                    )
+                        with open(config_path, "w+") as f:
+                            f.write(assembled_config)
 
-                    # output
-                    config_path = f"runs/{run_index}/config.toml"
-                    os.makedirs(os.path.dirname(config_path), exist_ok=True)
+                        run_locally_path = f"runs/{run_index}/run_locally.sh"
+                        with open(run_locally_path, "w+") as f:
+                            f.write(python_cmd)
 
-                    with open(config_path, "w+") as f:
-                        f.write(assembled_config)
+                        submit_slurm = f"runs/{run_index}/submit_slurm.sh"
+                        with open(submit_slurm, "w+") as f:
+                            f.write(slurm_script)
 
-                    run_locally_path = f"runs/{run_index}/run_locally.sh"
-                    with open(run_locally_path, "w+") as f:
-                        f.write(python_cmd)
-
-                    submit_slurm = f"runs/{run_index}/submit_slurm.sh"
-                    with open(submit_slurm, "w+") as f:
-                        f.write(slurm_script)
-
-                    # count runs
-                    count += 1
+                        # count runs
+                        count += 1
