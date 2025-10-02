@@ -16,6 +16,7 @@ def render_potential(
         number_of_vector_features: int,
         number_of_per_atom_features: int,
         interaction_module_hidden_layers: list,
+        number_of_interaction_modules:int,
 ):
     template = environment.get_template(template_path)
     config = template.render(
@@ -23,6 +24,7 @@ def render_potential(
         number_of_vector_features=number_of_vector_features,
         number_of_per_atom_features=number_of_per_atom_features,
         interaction_module_hidden_layers=interaction_module_hidden_layers,
+        number_of_interaction_modules=number_of_interaction_modules,
     )
     return config
 
@@ -106,8 +108,10 @@ if __name__ == "__main__":
                 for number_of_per_atom_features in range_number_of_per_atom_features:
                     for interaction_module_hidden_layers in options_interaction_module_hidden_layers:
 
+                        number_of_interaction_modules = len(interaction_module_hidden_layers)
+
                         # config names
-                        experiment_name = f"09(2)_{interaction_module_hidden_layers}({seed})"
+                        experiment_name = f"09(4)_{interaction_module_hidden_layers}({seed})"
                         project = "aimnet2_qm9"
                         group = "exp09_4"
                         tags = [
@@ -115,7 +119,7 @@ if __name__ == "__main__":
                             f"{number_of_radial_basis_functions=}",
                             f"{number_of_vector_features=}",
                             f"{number_of_per_atom_features=}",
-                            f"{interaction_module_hidden_layers=}",
+                            f"{number_of_interaction_modules=}",
                         ]
 
                         run_index = f"run{count:03d}"
@@ -131,6 +135,7 @@ if __name__ == "__main__":
                                 number_of_vector_features=number_of_vector_features,
                                 number_of_per_atom_features=number_of_per_atom_features,
                                 interaction_module_hidden_layers=interaction_module_hidden_layers,
+                                number_of_interaction_modules=number_of_interaction_modules,
                             )}"""
                             f"\n\n# ============================================================ #\n\n"
                             f"{render_runtime(env, runtime_template, experiment_name)}"

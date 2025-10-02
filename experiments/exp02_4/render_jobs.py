@@ -120,6 +120,12 @@ if __name__ == "__main__":
                 f"--accelerator 'gpu' --device [0]"
             )
 
+            local_python_cmd = (
+                f"python ../../../../scripts/perform_training.py "
+                f"--condensed_config_path config.toml "
+                f"--accelerator 'cpu' --device 1"
+            )
+
             slurm_script = render_slurm_job(
                 env,
                 slurm_template,
@@ -137,7 +143,7 @@ if __name__ == "__main__":
 
             run_locally_path = f"runs/{run_index}/run_locally.sh"
             with open(run_locally_path, "w+") as f:
-                f.write(python_cmd)
+                f.write(local_python_cmd)
 
             submit_slurm = f"runs/{run_index}/submit_slurm.sh"
             with open(submit_slurm, "w+") as f:
