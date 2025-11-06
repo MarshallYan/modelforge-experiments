@@ -89,8 +89,8 @@ if __name__ == "__main__":
                 for number_of_per_atom_features in range_number_of_per_atom_features:
 
                     # config names
-                    experiment_name = f"09(2)_{number_of_radial_basis_functions}_{number_of_vector_features}_{number_of_per_atom_features}({seed})"
-                    project = "aimnet2_qm9"
+                    experiment_name = f"09(3)_{number_of_radial_basis_functions}_{number_of_vector_features}_{number_of_per_atom_features}({seed})"
+                    project = "aimnet2_spice2"
                     group = "exp09_3"
                     tags = [
                         f"{seed=}",
