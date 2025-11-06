@@ -1,0 +1,15 @@
+[dataset]
+dataset_name = "qm9_local"
+version_select = "full_dataset_v1.3"
+num_workers = 4
+pin_memory = true
+properties_of_interest =  ["atomic_numbers", "positions",  "internal_energy_at_0K", "internal_energy_at_0K_regressed", "internal_energy_at_0K_formation_energy", 'internal_energy_at_0K_regressed_shifted', 'internal_energy_at_0K_formation_energy_shifted']
+element_filter = []
+local_yaml_file = "/Users/syan/workdir/modelforge-experiments/experiments/exp09_5/cache/qm9_normalization_tests/qm9_local.yaml" #note, this should in general be the full path to the yaml file,
+                                                        #but for testing purposes on CI, we need to use a placeholder
+                                                        #i.e., path_to_file, which the test will replace.
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "internal_energy_at_0K_formation_energy_shifted"
