@@ -8,7 +8,7 @@ number_of_vector_features = {{ number_of_vector_features }}
 maximum_interaction_radius = "5.0 angstrom"
 number_of_interaction_modules = {{ number_of_interaction_modules }}
 interaction_module_hidden_layers = {{ interaction_module_hidden_layers }}  # [[512, 380], [512, 380], [512, 380, 380]]
-output_module_hidden_layers = [128,128]
+output_module_hidden_layers = {{ output_module_hidden_layers }}  # [128, 128]
 predicted_properties = ["per_atom_energy"]
 predicted_dim = [1]
 
