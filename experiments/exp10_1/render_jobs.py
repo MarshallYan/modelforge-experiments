@@ -36,7 +36,6 @@ def render_training(
         group: str,
         tags: list,
         seed: int,
-        per_atom_force: float,
 ):
     template = environment.get_template(template_path)
     config = template.render(
@@ -44,7 +43,6 @@ def render_training(
         group=group,
         tags=tags,
         seed=seed,
-        per_atom_force=per_atom_force,
     )
     return config
 
