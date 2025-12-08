@@ -74,7 +74,7 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    options_normalize = [True, False]
+    options_normalize = ["true", "false"]
 
     count = 0
     for seed in range_seed:
