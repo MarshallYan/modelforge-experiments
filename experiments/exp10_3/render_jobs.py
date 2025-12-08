@@ -74,19 +74,19 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    options_normalization = [True, False]
+    options_normalize = [True, False]
 
     count = 0
     for seed in range_seed:
-        for normalization in options_normalization:
+        for normalize in options_normalize:
 
             # config names
-            experiment_name = f"10(1)_{normalization}_({seed})"
+            experiment_name = f"10(1)_{normalize}_({seed})"
             project = "per_atom_energy_normalization"
             group = "exp10_3"
             tags = [
                 f"{seed=}",
-                f"{normalization=}",
+                f"{normalize=}",
                 "AIMNet2",
                 "QM9",
             ]
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 f"""{render_potential(
                     env,
                     potential_template,
-                    normalization,
+                    normalize,
                 )}"""
                 f"\n\n# ============================================================ #\n\n"
                 f"{render_runtime(env, runtime_template, experiment_name)}"

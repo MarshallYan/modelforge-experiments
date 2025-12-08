@@ -12,11 +12,11 @@ def render_dataset(
 def render_potential(
         environment: Environment,
         template_path: str,
-        normalization: bool,
+        normalize: bool,
 ):
     template = environment.get_template(template_path)
     config = template.render(
-        normalization=normalization,
+        normalize=normalize,
     )
     return config
 
@@ -74,19 +74,19 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    options_normalization = [True, False]
+    options_normalize = [True, False]
 
     count = 0
     for seed in range_seed:
-        for normalization in options_normalization:
+        for normalize in options_normalize:
 
             # config names
-            experiment_name = f"10(2)_{normalization}_({seed})"
+            experiment_name = f"10(2)_{normalize}_({seed})"
             project = "per_atom_energy_normalization"
             group = "exp10_2"
             tags = [
                 f"{seed=}",
-                f"{normalization=}",
+                f"{normalize=}",
                 "SchNet"
                 "tmQM-OpenFF",
             ]
@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 f"""{render_potential(
                     env,
                     potential_template,
-                    normalization,
+                    normalize,
                 )}"""
                 f"\n\n# ============================================================ #\n\n"
                 f"{render_runtime(env, runtime_template, experiment_name)}"
