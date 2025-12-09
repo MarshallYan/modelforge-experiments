@@ -12,11 +12,11 @@ def render_dataset(
 def render_potential(
         environment: Environment,
         template_path: str,
-        normalization: bool,
+        normalize: str,
 ):
     template = environment.get_template(template_path)
     config = template.render(
-        normalization=normalization,
+        normalize=normalize,
     )
     return config
 
