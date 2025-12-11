@@ -81,7 +81,7 @@ if __name__ == "__main__":
         for normalize in options_normalize:
 
             # config names
-            experiment_name = f"10(2)_{normalize}_({seed})"
+            experiment_name = f"10(4)_{normalize}_({seed})"
             project = "per_atom_energy_normalization"
             group = "exp10_4"
             tags = [
