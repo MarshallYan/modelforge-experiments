@@ -28,3 +28,13 @@ properties_to_process = ['per_atom_energy']
 normalize = {{ normalize }}
 from_atom_to_system_reduction = true
 keep_per_atom_property = true
+
+[potential.postprocessing_parameter.per_system_electrostatic_energy]
+electrostatic_strategy = "coulomb"
+maximum_interaction_radius = "15.0 angstrom"
+
+[potential.postprocessing_parameter.per_system_vdw_energy]
+maximum_interaction_radius = "15.0 angstrom"
+
+[potential.postprocessing_parameter.sum_per_system_energy]
+contributions = ['per_system_electrostatic_energy', 'per_system_vdw_energy']
