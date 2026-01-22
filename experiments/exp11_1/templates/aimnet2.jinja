@@ -1,0 +1,40 @@
+[potential]
+potential_name = "AimNet2"
+potential_seed = 12345
+
+[potential.core_parameter]
+number_of_radial_basis_functions = 64
+number_of_vector_features = 8
+maximum_interaction_radius = "5.0 angstrom"
+number_of_interaction_modules = 3
+interaction_module_hidden_layers = [[512, 256], [512, 256], [512, 256, 256]]  # [[512, 380], [512, 380], [512, 380, 380]]
+output_module_hidden_layers = [128, 128]
+predicted_properties = ["per_atom_energy"]
+predicted_dim = [1]
+
+[potential.core_parameter.activation_function_parameter]
+activation_function_name = "GeLU"
+
+[potential.core_parameter.featurization]
+properties_to_featurize = ['atomic_number', "per_system_spin_state"]
+[potential.core_parameter.featurization.atomic_number]
+maximum_atomic_number = 101
+number_of_per_atom_features = 512
+
+[potential.postprocessing_parameter]
+properties_to_process = ['per_atom_energy', 'per_system_electrostatic_energy', 'per_system_vdw_energy', "sum_per_system_energy"]
+
+[potential.postprocessing_parameter.per_atom_energy]
+normalize = true
+from_atom_to_system_reduction = true
+keep_per_atom_property = true
+
+[potential.postprocessing_parameter.per_system_electrostatic_energy]
+electrostatic_strategy = "coulomb"
+maximum_interaction_radius = "15.0 angstrom"
+
+[potential.postprocessing_parameter.per_system_vdw_energy]
+maximum_interaction_radius = "15.0 angstrom"
+
+[potential.postprocessing_parameter.sum_per_system_energy]
+contributions = {{ contributions }}  # ['per_system_electrostatic_energy', 'per_system_vdw_energy']

@@ -101,7 +101,7 @@ class DatasetProperties(ABC):
 
     def prepare(self):
         # initialize
-        properties = {"dataset_type": [], "seed": []}
+        properties = {"dataset_type": [], "seed": [],}
         for property_name in self.property_names:
             properties[property_name] = []
 
@@ -164,6 +164,7 @@ class PerGeometryProperties(DatasetProperties):
                 raise ValueError(f"property {property_name} does not exist!")
     
         if to_array:
+            collection = torch.tensor(collection)
             if collection[0].shape == torch.Size([1]):
                 collection = [value.item() for value in collection]
             else:
