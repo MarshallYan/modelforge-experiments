@@ -87,7 +87,7 @@ if __name__ == "__main__":
         ['per_system_vdw_energy'],
         ['per_system_electrostatic_energy', 'per_system_vdw_energy'],
     )
-    options_per_system_energy = [0, 0.01]
+    options_per_system_energy = [0.01]
     options_per_system_dipole_moment = [0, 1]
     options_per_atom_charge = [0, 0.1]
     options_per_atom_force = [0, 0.001]
