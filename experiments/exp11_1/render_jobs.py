@@ -82,12 +82,12 @@ if __name__ == "__main__":
 
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
-    options_contributions = (
+    options_contributions = [
         [],
         ['per_system_vdw_energy'],
         ['per_system_electrostatic_energy', 'per_system_vdw_energy'],
-    )
-    options_per_system_energy = [0, 0.01]
+    ]
+    options_per_system_energy = [0.01]
     options_per_system_dipole_moment = [0, 1]
     options_per_atom_charge = [0, 0.1]
     options_per_atom_force = [0, 0.001]
@@ -101,12 +101,12 @@ if __name__ == "__main__":
                         for per_atom_force in options_per_atom_force:
 
                             # config names
-                            experiment_name = f"09(5)_E{len(contributions)}_{per_system_energy}_{per_system_dipole_moment}_{per_atom_charge}_{per_atom_force}({seed})"
+                            experiment_name = f"11(1)_E{len(contributions)}_{per_system_energy}_{per_system_dipole_moment}_{per_atom_charge}_{per_atom_force}({seed})"
                             project = "aimnet2_qm9"
                             group = "exp11_1"
                             tags = [
                                 f"{seed=}",
-                                f"{contributions=}",
+                                f"contributions={len(contributions)}",
                                 f"{per_system_energy=}",
                                 f"{per_system_dipole_moment=}",
                                 f"{per_atom_charge=}",
