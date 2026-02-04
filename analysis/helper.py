@@ -164,7 +164,7 @@ class PerGeometryProperties(DatasetProperties):
                 raise ValueError(f"property {property_name} does not exist!")
     
         if to_array:
-            collection = torch.tensor(collection)
+            # collection = torch.tensor(collection)
             if collection[0].shape == torch.Size([1]):
                 collection = [value.item() for value in collection]
             else:
