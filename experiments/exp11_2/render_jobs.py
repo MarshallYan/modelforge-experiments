@@ -83,13 +83,13 @@ if __name__ == "__main__":
     # rendering experiment configs
     range_seed = [42, 43, 44, 45, 46]
     options_contributions = [
-        # [],
-        # ['per_system_vdw_energy'],
+        [],
+        ['per_system_vdw_energy'],
         ['per_system_electrostatic_energy', 'per_system_vdw_energy'],
     ]
     options_per_system_energy = [0.01]
-    options_per_system_dipole_moment = [1]
-    options_per_atom_charge = [0.1]
+    options_per_system_dipole_moment = [0, 1]
+    options_per_atom_charge = [0, 0.1]
     options_per_atom_force = [0, 0.001]
 
     count = 0
@@ -100,12 +100,23 @@ if __name__ == "__main__":
                     for per_atom_charge in options_per_atom_charge:
                         for per_atom_force in options_per_atom_force:
 
+                            if len(contributions) == 0 and (per_system_dipole_moment != 0 or per_atom_charge != 0 or per_atom_force != 0):
+                                continue
+                            if len(contributions) == 1 and (per_system_dipole_moment != 0 or per_atom_charge != 0 or per_atom_force != 0):
+                                continue
+                            if len(contributions) == 2 and (per_system_dipole_moment == 0 or per_atom_charge == 0):
+                                continue
+
                             # config names
-                            experiment_name = f"11(2)_F{per_atom_force}({seed})"
-                            project = "aimnet2_tmqm_openff"
+                            experiment_name = f"11(2)_E{len(contributions)}_{per_system_energy}_{per_system_dipole_moment}_{per_atom_charge}_{per_atom_force}({seed})"
+                            project = "aimnet2_qm9"
                             group = "exp11_2"
                             tags = [
                                 f"{seed=}",
+                                f"contributions={len(contributions)}",
+                                f"{per_system_energy=}",
+                                f"{per_system_dipole_moment=}",
+                                f"{per_atom_charge=}",
                                 f"{per_atom_force=}",
                             ]
 
@@ -124,8 +135,8 @@ if __name__ == "__main__":
                                 f"{render_runtime(env, runtime_template, experiment_name)}"
                                 f"\n\n# ============================================================ #\n\n"
                                 f"""{render_training(
-                                    env, 
-                                    training_template, 
+                                    env,
+                                    training_template,
                                     project,
                                     group,
                                     tags,
