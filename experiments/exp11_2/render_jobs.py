@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
                             # config names
                             experiment_name = f"11(2)_E{len(contributions)}_{per_system_energy}_{per_system_dipole_moment}_{per_atom_charge}_{per_atom_force}({seed})"
-                            project = "aimnet2_qm9"
+                            project = "aimnet2_tmqmopenff"
                             group = "exp11_2"
                             tags = [
                                 f"{seed=}",
