@@ -1,11 +1,11 @@
 [dataset]
 dataset_name = "tmqm_openff_local"
-version_select = "full_dataset_v1.2"
+version_select = "full_dataset_v1.3c"
 num_workers = 4
 pin_memory = true
-properties_of_interest = ["atomic_numbers", "positions", "dft_total_energy_corrected", "scf_dipole", "total_charge", "lowdin_partial_charges", "per_system_spin_multiplicity", "dft_total_force"]
+properties_of_interest = ["atomic_numbers", "positions", "dft_total_energy", "dft_total_energy_corrected", "scf_dipole", "total_charge", "lowdin_partial_charges", "per_system_spin_multiplicity", "dft_total_force"]
 element_filter = []
-local_yaml_file = "/home/yans3/workdir/shuaiy/modelforge-experiments/experiments/exp08_3/cache/fixed_test_subset/tmqm_openff_local.yaml" #note, this should in general be the full path to the yaml file,
+local_yaml_file = "/home/yans3/workdir/shuaiy/modelforge-experiments/experiments/exp10_2/cache/charge_spin_corrected/tmqm_openff_local.yaml" #note, this should in general be the full path to the yaml file,
                                                         #but for testing purposes on CI, we need to use a placeholder
                                                         #i.e., path_to_file, which the test will replace.
 
