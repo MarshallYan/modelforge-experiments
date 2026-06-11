@@ -75,9 +75,9 @@ if __name__ == "__main__":
     count = 0
     for seed in range_seed:
         # config names
-        experiment_name = f"AIMNet2_tmQMOpenFF({seed})"
+        experiment_name = f"AIMNet2_tmQMOpenFF_ext({seed})"
         project = "ext_tmqmopenff"
-        group = "AIMNet2_tmQMOpenFF_v0"
+        group = "AIMNet2_tmQMOpenFF_ext"
         tags = [
             f"{seed=}",
         ]
