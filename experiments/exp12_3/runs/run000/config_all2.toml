@@ -1,0 +1,135 @@
+[potential]
+potential_name = "AimNet2"
+potential_seed = 12345
+
+[potential.core_parameter]
+number_of_radial_basis_functions = 64
+number_of_vector_features = 16
+maximum_interaction_radius = "5.0 angstrom"
+number_of_interaction_modules = 3
+interaction_module_hidden_layers = [[512, 380], [512, 380], [512, 380, 380]]
+output_module_hidden_layers = [128,128]
+predicted_properties = ["per_atom_energy"]
+predicted_dim = [1,]
+
+[potential.core_parameter.activation_function_parameter]
+activation_function_name = "GeLU"
+
+[potential.core_parameter.featurization]
+properties_to_featurize = ['atomic_number', 'per_system_spin_state', "per_system_total_charge"]
+[potential.core_parameter.featurization.atomic_number]
+maximum_atomic_number = 101
+number_of_per_atom_features = 128
+
+[potential.postprocessing_parameter]
+properties_to_process = ['per_atom_energy', 'per_system_electrostatic_energy', 'per_system_vdw_energy', "sum_per_system_energy"]
+
+[potential.postprocessing_parameter.per_atom_energy]
+normalize = false
+from_atom_to_system_reduction = true
+keep_per_atom_property = true
+
+
+[potential.postprocessing_parameter.per_system_electrostatic_energy]
+electrostatic_strategy = "coulomb"
+maximum_interaction_radius = "15.0 angstrom"
+
+
+[potential.postprocessing_parameter.per_system_vdw_energy]
+d3_engine = "tad-dftd3"
+maximum_interaction_radius = "15.0 angstrom"
+
+[potential.postprocessing_parameter.sum_per_system_energy]
+contributions = ['per_system_electrostatic_energy', 'per_system_vdw_energy']
+
+
+[dataset]
+dataset_name = "tmqm_openff_local"
+version_select = "full_dataset_v1.4c"
+num_workers = 4
+pin_memory = true
+properties_of_interest = ["atomic_numbers", "positions", "dft_total_energy", "dft_total_energy_corrected", "scf_dipole", "total_charge", "lowdin_partial_charges", "mulliken_partial_charges", "per_system_spin_multiplicity", "dft_total_force",]# "spin_multiplicity_per_atom"]
+element_filter = []
+local_yaml_file = "/home/yans3/workdir/shuaiy/modelforge-experiments/experiments/exp12/cache/tmqm_openff_ext/tmqm_openff.yaml" #note, this should in general be the full path to the yaml file,
+                                                        #but for testing purposes on CI, we need to use a placeholder
+                                                        #i.e., path_to_file, which the test will replace.
+
+[dataset.properties_assignment]
+atomic_numbers = "atomic_numbers"
+positions = "positions"
+E = "dft_total_energy_corrected"
+dipole_moment = "scf_dipole"
+partial_charges = "lowdin_partial_charges"
+total_charge= "total_charge"
+spin_multiplicity="per_system_spin_multiplicity"
+F = "dft_total_force"
+#per_atom_spin_multiplicity = "spin_multiplicity_per_atom"
+
+[training]
+number_of_epochs = 500
+remove_self_energies = false
+batch_size = 32
+lr = 1e-4
+monitor = "val/per_system_energy/rmse"
+shift_center_of_mass_to_origin = true
+gradient_clip_val = 0.1
+#log_norm = true 
+
+[training.experiment_logger]
+logger_name = "tensorboard"
+
+[training.experiment_logger.tensorboard_configuration]
+save_dir = "logs/all_fix_nof"
+
+[training.lr_scheduler]
+scheduler_name = "ReduceLROnPlateau"
+frequency = 1
+mode = "min"
+factor = 0.1
+patience = 10
+cooldown = 5
+min_lr = 1e-8
+threshold = 0.1
+threshold_mode = "abs"
+interval = "epoch"
+
+[training.loss_parameter]
+loss_components = ['per_system_energy', 'per_system_dipole_moment', 'per_atom_charge', ] #'per_atom_force' ] # "per_atom_spin_multiplicity"] 
+
+[training.loss_parameter.weight]
+per_system_energy = 0.01 #0.0001 #NOTE: reciprocal units
+per_system_dipole_moment = 1# 0.1 #NOTE: reciprocal units
+#per_system_total_charge = 0.1
+per_atom_charge = 0.1 #1
+#per_atom_force = 0.001
+#per_atom_spin_multiplicity = 1000
+
+#[training.loss_parameter.target_weight]
+#per_system_dipole_moment = 1
+#per_atom_charge = 1
+
+#[training.loss_parameter.mixing_steps]
+#per_system_dipole_moment= 0.005
+#per_atom_charge = 0.005
+
+[training.early_stopping]
+verbose = true
+min_delta = 0.001
+patience = 50
+
+[training.splitting_strategy]
+name = "random_record_splitting_strategy"
+data_split = [0.8, 0.1, 0.1]
+seed = 42
+
+[runtime]
+verbose = true
+save_dir = "lightning_logs"
+experiment_name = "{potential_name}_{dataset_name}"
+local_cache_dir = "./cache"
+accelerator = "gpu"
+number_of_nodes = 1
+devices = 1                                         #[0,1,2,3]
+checkpoint_path = "None"
+simulation_environment = "PyTorch"
+log_every_n_steps = 1
