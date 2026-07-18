@@ -76,10 +76,16 @@ gradient_clip_val = 0.1
 #log_norm = true 
 
 [training.experiment_logger]
-logger_name = "tensorboard"
+logger_name = "wandb"
+[training.experiment_logger.wandb_configuration]
+save_dir = "logs"
+project = "ext_tmqmopenff"
+group = "AIMNet2_tmQMOpenFF_full"
+log_model = true
+job_type = "benchmarking"
+tags = []
+notes = ""
 
-[training.experiment_logger.tensorboard_configuration]
-save_dir = "logs/all_fix_nof"
 
 [training.lr_scheduler]
 scheduler_name = "ReduceLROnPlateau"
@@ -125,7 +131,7 @@ seed = 42
 [runtime]
 verbose = true
 save_dir = "lightning_logs"
-experiment_name = "{potential_name}_{dataset_name}"
+experiment_name = "Chris_AIMNet2_tmQMOpenFF_ext(42)"
 local_cache_dir = "./cache"
 accelerator = "gpu"
 number_of_nodes = 1
