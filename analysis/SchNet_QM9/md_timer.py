@@ -88,7 +88,8 @@ def main():
     
                 # record in the df
                 df[mol] = {model_id: runtime}
-                df.to_csv("md_time.csv")
+
+    df.to_csv("md_time.csv")
 
 if __name__ == "__main__":
     main()
