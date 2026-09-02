@@ -29,4 +29,4 @@ mamba activate modelforge
 
 # Execute the python command
 pwd
-srun python record_md_time.py
+python md_timer.py
