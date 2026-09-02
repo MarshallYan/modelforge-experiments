@@ -28,9 +28,9 @@ from modelforge.potential.potential import load_inference_model_from_checkpoint
 
 def main():
     # make the csv format data
-    cols = ["glucose", "phenylalanine", "caffeine", "camptothecin", "nirmatrelvir"]
+    cols = ["glucose", "phenylalanine", "caffeine", "camptothecin", "nirmatrelvir", "number_of_trainable_parameters"]
     df = pd.DataFrame(columns=cols)
-    
+
     # benchmarking molecules
     benchmarking_mols = {
         "glucose": "C([C@@H]1[C@H]([C@@H]([C@H]([C@H](O1)O)O)O)O)O",
@@ -45,10 +45,19 @@ def main():
         for filename in filenames:
             checkpoint_file_path = os.path.join(dirpath, filename)
             model_id = os.path.basename(dirpath)[6:-3]  # model-ms7006xl_v0
-    
+
+            # skip hidden files
+            if filename.startswith('.'):
+                continue
+
             # setup potential
+            print(model_id)
             potential = load_inference_model_from_checkpoint(checkpoint_file_path, jit=False)
-    
+
+            # log the number of trainable parameters
+            number_of_parameters = sum(p.numel() for p in potential.parameters())
+            df.loc[model_id, "number_of_trainable_parameters"] = number_of_parameters
+
             # setup molecule (loop through)
             for i, mol in enumerate(benchmarking_mols.keys()):
                 runtime = []
@@ -58,38 +67,33 @@ def main():
         
                     comp = generate_compute(potential=potential, atomic_numbers=atomic_numbers, device="cuda")
                     system_force = PythonForce(comp)
-        
+
                     # define the system
                     system = openmm.System()
                     for atom in topology.atoms():
                         system.addParticle(atom.element.mass)
-                    
+
                     # add the system_force instance defined above that wraps modelforge potential for PythonFroce
                     system.addForce(system_force)
-        
-        
+
                     # Create an integrator with a time step of 0.5 fs
                     temperature = 298.15 * kelvin
                     frictionCoeff = 1.0 / femtosecond
                     timeStep = 0.5 * femtosecond
                     integrator = LangevinMiddleIntegrator(temperature, frictionCoeff, timeStep)
-        
+
                     # Create a simulation and set the initial positions and velocities
                     simulation = Simulation(topology, system, integrator)
                     simulation.context.setPositions(positions)
-                    
+
                     start_time = time.perf_counter()
-                    simulation.step(10)
+                    simulation.step(1)
                     end_time = time.perf_counter()
                     duration = end_time - start_time
-                    
+
                     print(f"Execution time: {duration:.4f} seconds")
                     runtime.append(duration)
-    
+
                 # record in the df
-                df[mol] = {model_id: runtime}
-
+                df.loc[model_id, mol] = runtime
     df.to_csv("md_time.csv")
-
-if __name__ == "__main__":
-    main()
