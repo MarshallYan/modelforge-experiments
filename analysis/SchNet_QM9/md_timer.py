@@ -27,6 +27,7 @@ from modelforge.potential.potential import load_inference_model_from_checkpoint
 
 
 def main():
+    print("main")
     # make the csv format data
     cols = ["glucose", "phenylalanine", "caffeine", "camptothecin", "nirmatrelvir", "number_of_trainable_parameters"]
     df = pd.DataFrame(columns=cols)
@@ -40,7 +41,7 @@ def main():
         "nirmatrelvir": "CC1([C@@H]2[C@H]1[C@H](N(C2)C(=O)[C@H](C(C)(C)C)NC(=O)C(F)(F)F)C(=O)N[C@@H](C[C@@H]3CCNC3=O)C#N)C",
     }
     
-    checkpoint_dir = '/home/yans3/workdir/shuaiy/modelforge-experiments/experiments/exp14/downloads/checkpoints/'
+    checkpoint_dir = '/home/yans3/workdir/shuaiy/modelforge-experiments/experiments/exp14/downloads/tests/'
     for dirpath, dirname, filenames in os.walk(checkpoint_dir):
         for filename in filenames:
             checkpoint_file_path = os.path.join(dirpath, filename)
@@ -97,3 +98,7 @@ def main():
                 # record in the df
                 df.loc[model_id, mol] = runtime
     df.to_csv("md_time.csv")
+
+
+if __name__ == "__main__":
+    main()
