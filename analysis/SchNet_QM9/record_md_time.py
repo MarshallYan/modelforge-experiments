@@ -56,7 +56,7 @@ def main():
                     topology, positions = openmm_topology_from_smiles(smiles=benchmarking_mols[mol], optimize=True)
                     atomic_numbers = [atom.element.atomic_number for atom in topology.atoms()]
         
-                    comp = generate_compute(potential=potential, atomic_numbers=atomic_numbers)
+                    comp = generate_compute(potential=potential, atomic_numbers=atomic_numbers, device="cuda")
                     system_force = PythonForce(comp)
         
                     # define the system
