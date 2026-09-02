@@ -1,0 +1,161 @@
+---
+title: "SchNet_QM9"
+author: "Shuai Yan"
+date: "2026-08-27"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(car)
+library(dplyr)
+library(effectsize)
+library(tidyverse)
+```
+
+## Import and rename data
+
+```{r}
+dat <- schnet_qm9 %>%
+  rename(
+    mae = test.per_system_energy.mae,
+    rmse = test.per_system_energy.rmse,
+    rbf = number_of_radial_basis_functions,
+    inter = number_of_interaction_modules,
+    filt = number_of_filters,
+    feat = number_of_per_atom_features,
+    time = runtime,
+    gpu = GPU_usage,
+  )
+
+```
+
+## MAE
+
+### Check ANOVA assumption: homogeneity of variance
+
+```{r}
+dat_f <- dat %>%
+  mutate(across(c(rbf, inter, filt, feat), factor))
+
+leveneTest(mae ~ rbf * inter * filt * feat, data = dat_f)
+```
+### Determine transformations required on the raw data
+
+```{r}
+fit0 <- lm(mae ~ rbf * inter * filt * feat, data = dat)
+
+if (all(dat$mae > 0)) {
+  bc <- MASS::boxcox(fit0, lambda = seq(-2, 2, 0.1))
+  bc$x[which.max(bc$y)]
+}
+```
+```{r}
+coef(a)
+```
+
+### ANOVA
+
+```{r}
+a <- aov(
+  1/mae ~ (rbf * inter * filt * feat), 
+  data=dat,
+)
+
+summary(b)
+```
+
+### Effect size
+
+```{r}
+omega2 <- omega_squared(a)
+
+# order by omega2
+(omega2 <- omega2[order(omega2$Omega2_partial, decreasing=TRUE),])
+```
+
+
+```{r}
+ggplot(omega2, aes(x=reorder(omega2$Parameter, omega2$Omega2_partial), y=Omega2_partial)) + 
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x = "factors", y = "omega-squared", title = "Variance explained by each term")
+```
+
+## GPU memory utilization
+
+```{r}
+dat_f <- dat %>%
+  mutate(across(c(rbf, inter, filt, feat), factor))
+
+leveneTest(gpu*40 ~ rbf * inter * filt * feat, data = dat_f)
+```
+
+```{r}
+fit0 <- lm(gpu*40 ~ rbf * inter * filt * feat, data = dat)
+
+if (all(dat$gpu > 0)) {
+  bc <- MASS::boxcox(fit0, lambda = seq(-2, 2, 0.1))
+  bc$x[which.max(bc$y)]              # suggested lambda
+}
+```
+
+```{r}
+a <- aov(
+  gpu*40 ~ (rbf * inter * filt * feat), 
+  data=dat,
+)
+
+summary(a)
+```
+
+```{r}
+(omega2 <- omega_squared(a))
+```
+
+```{r}
+ggplot(omega2, aes(x=reorder(omega2$Parameter, omega2$Omega2_partial), y=Omega2_partial)) + 
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x = "factors", y = "omega-squared", title = "Variance explained by each term")
+```
+
+
+## Convergence time
+
+```{r}
+dat_f <- dat %>%
+  mutate(across(c(rbf, inter, filt, feat), factor))
+
+leveneTest(time ~ rbf * inter * filt * feat, data = dat_f)
+```
+
+```{r}
+fit0 <- lm(time ~ rbf * inter * filt * feat, data = dat)
+
+if (all(dat$time > 0)) {
+  bc <- MASS::boxcox(fit0, lambda = seq(-2, 2, 0.1))
+  bc$x[which.max(bc$y)]              # suggested lambda
+}
+```
+
+```{r}
+a <- aov(
+  1/sqrt(time) ~ (rbf * inter * filt * feat), 
+  data=dat,
+)
+
+summary(a)
+```
+
+```{r}
+(omega2 <- omega_squared(a))
+```
+
+```{r}
+ggplot(omega2, aes(x=reorder(omega2$Parameter, omega2$Omega2_partial), y=Omega2_partial)) + 
+  geom_bar(stat="identity") +
+  coord_flip() +
+  labs(x = "factors", y = "omega-squared", title = "Convergence time variance explained by each term")
+```
+
