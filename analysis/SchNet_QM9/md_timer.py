@@ -97,7 +97,11 @@ def main():
 
                 # record in the df
                 df.loc[model_id, mol] = runtime
+
+    df.index.name = "id"
     df.to_csv("md_time.csv")
+
+    return df
 
 
 if __name__ == "__main__":
