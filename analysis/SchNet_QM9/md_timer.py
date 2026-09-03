@@ -90,7 +90,7 @@ def main():
                     simulation.context.setPositions(positions)
 
                     start_time = time.perf_counter()
-                    simulation.step(1)
+                    simulation.step(10)
                     end_time = time.perf_counter()
                     duration = end_time - start_time
 
