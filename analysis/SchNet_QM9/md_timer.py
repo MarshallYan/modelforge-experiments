@@ -1,3 +1,4 @@
+import gc
 import os
 import sys
 import time
@@ -20,6 +21,7 @@ from openmm.unit import (
     kilojoules_per_mole,
 )
 import pandas as pd
+import torch
 
 from modelforge.openmm.examples.helper_functions import openmm_topology_from_smiles
 from modelforge.openmm.potential import generate_compute
@@ -97,6 +99,11 @@ def main():
 
                 # record in the df
                 df.loc[model_id, mol] = runtime
+
+                # release memory
+                del simulation, integrator, system, comp
+                gc.collect()
+                torch.cuda.empty_cache()
 
     df.index.name = "id"
     df.to_csv("md_time.csv")
